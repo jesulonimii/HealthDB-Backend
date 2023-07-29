@@ -1,0 +1,43 @@
+{
+  "name": "healthdb",
+  "version": "1.0.0",
+  "engines": {
+    "node": "v20.5.0"
+  },
+  "description": "HealthDB API and Web",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon",
+    "dev": "node --no-warnings --loader ./config/esm-loader.js server.js"
+  },
+  "author": "Jesulonimii",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.17.1",
+    "express-unless": "^2.1.1",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^6.5.2",
+    "nodemailer": "^6.7.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^3.0.0",
+    "serverless-http": "^2.7.0"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "/*",
+    "#middlewares": "./middlewares/index.js",
+    "#utils": "./utils/index.js",
+    "#models": "./models/index.js",
+    "#helpers": "./helpers/index.js",
+    "#routes": "./routes/index.js",
+    "#controllers": "./controllers/index.js",
+    "#middleware/*": "./middlewares/*.js",
+    "#models/*": "./models/*.js",
+    "#helpers/*": "./helpers/*.js",
+    "#routes/*": "./routes/*.js",
+    "#controllers/*": "./controllers/*.js"
+  }
+}
