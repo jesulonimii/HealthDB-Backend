@@ -5,7 +5,8 @@ import dotenv from "dotenv"
 
 //Import Routes
 import AuthRouter from "#routes/auth.route";
-import bodyParser from "body-parser";
+import UserRouter from "#routes/user.route";
+import AppointmentRouter from "#routes/appointment.route";
 
 
 dotenv.config()
@@ -24,6 +25,8 @@ app.use(express.json())
 
 //Route Middlewares
 app.use('/auth/', AuthRouter)
+app.use('/users/', UserRouter)
+app.use('/appointments/', AppointmentRouter)
 
 
 app.get("/", (req, res) => {

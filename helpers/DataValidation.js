@@ -12,4 +12,23 @@ export const loginValidationSchema = Joi.object({
 	password: Joi.string().required(),
 });
 
-export default {signupValidationSchema, loginValidationSchema};
+export const editUserValidationSchema = Joi.object({
+	student: Joi.object(),
+	personal_info: Joi.object(),
+	contact_info: Joi.object(),
+	emergency_contacts: Joi.array(),
+	medical_history: Joi.object(),
+	notifications: Joi.array(),
+	appointments: Joi.array(),
+	health_centre_registration: Joi.object(),
+	pending_appointment: Joi.object(),
+	completed_app_registration: Joi.bool(),
+});
+
+export const appointmentValidationSchema = Joi.object({
+	appointment_id: Joi.string().required(),
+	date_time: Joi.date().required(),
+});
+
+
+export default {signupValidationSchema, loginValidationSchema, editUserValidationSchema, appointmentValidationSchema};

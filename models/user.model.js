@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         status: { type: Boolean, default: false },
         message: { type: String, default: "Please visit the health centre to complete your registration." },
     },
-    pending_appointment: { type: String, default: null },
+    pending_appointment: { type: Object, default: null },
     completed_app_registration: { type: Boolean, default: false },
 });
 

@@ -7,8 +7,7 @@
   "description": "HealthDB API and Web",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon",
-    "dev": "node --no-warnings --loader ./config/esm-loader.js server.js"
+    "start": "nodemon"
   },
   "author": "Jesulonimii",
   "dependencies": {

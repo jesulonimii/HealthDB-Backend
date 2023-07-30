@@ -1,10 +1,11 @@
 //User Routes
 
 import { Router } from "express";
-import { EditUser } from "#controllers/user.controller";
+import { EditUser, GetUser } from "#controllers/user.controller";
 
 const router = Router();
 
-router.post("/:id", EditUser);
+router.get("/", GetUser);
+router.patch("/:id", EditUser);
 
 export default router;

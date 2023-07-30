@@ -8,13 +8,13 @@ const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
 export const Signup = async (req, res) => {
 	const { error } = signupValidationSchema.validate(req.body);
-	if (error) return res.status(STATUS_CODE.BAD_REQUEST).send(ErrorResponse(error.message));
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 
 	//check if matric number exists
 	const matricExist = await UserModel.findOne({ user_id: req.body?.matric_number.toLowerCase() });
 	if (matricExist) {
 		return res
-			.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+			.status(INTERNAL_SERVER_ERROR)
 			.send(ErrorResponse(`User SignUp Failed: Matric number already exists!`));
 	}
 
@@ -64,13 +64,13 @@ export const Signup = async (req, res) => {
 				return new Error(err.message);
 			});
 	} catch (e) {
-		return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send({ error: `User SignUp Failed: ${e.message}` });
+		return res.status(INTERNAL_SERVER_ERROR).send({ error: `User SignUp Failed: ${e.message}` });
 	}
 };
 
 export const Login = async (req, res) => {
 	const { error } = loginValidationSchema.validate(req.body);
-	if (error) return res.status(STATUS_CODE.BAD_REQUEST).send(ErrorResponse(error.message));
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 
 	//check if matric number exists
 
