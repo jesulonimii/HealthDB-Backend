@@ -60,7 +60,37 @@ export const GetAppointment = async (req, res) => {
 	}
 }
 
+export const DeletePendingAppointment = async (req, res) => {
+	const { user_id } = req.params;
+
+	const { error } = appointmentValidationSchema.validate(req.body);
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
+
+	const filter = { user_id: user_id.toLowerCase().trim() };
+	const update = {
+		pending_appointment: null
+	};
+	const options = { new: true};
+
+	try {
+
+		UserModel.findOneAndUpdate(filter, update, options).then((data, err) => {
+			if (err) {
+				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when updating User appointment data: ${err.message}`));
+			}
+
+			return res.status(OK).send(data);
+
+		});
+
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Appointment delete Failed: ${e.message}`));
+	}
+}
 
 export default {
 	CreateAppointment,
+	DeletePendingAppointment,
+	GetAppointment
 };
