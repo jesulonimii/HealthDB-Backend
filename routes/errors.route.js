@@ -2,11 +2,10 @@
 
 import { Router } from "express";
 import { ErrorResponse, STATUS_CODE } from "#utils";
-import app from "../app.js";
 
 const router = Router();
 
-app.all("/", (req, res) => {
+router.all("/", (req, res) => {
 	res.end("Welcome to HealthDB Api");
 })
 
