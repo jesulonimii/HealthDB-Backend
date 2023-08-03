@@ -1,7 +1,7 @@
 const data = {
 	users: [
 		{
-			id: "csc/2019/108",
+			user_id: "csc/2019/108",
 			password: "12",
 			student: {
 				level: 300,

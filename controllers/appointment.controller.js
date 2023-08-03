@@ -2,7 +2,6 @@ import { appointmentValidationSchema } from "#helpers/DataValidation";
 import { AppointmentModel, UserModel } from "#models";
 
 import { ErrorResponse, STATUS_CODE } from "#utils";
-import AppointmentController from "#controllers/appointment.controller";
 
 const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
@@ -63,8 +62,8 @@ export const GetAppointment = async (req, res) => {
 export const DeletePendingAppointment = async (req, res) => {
 	const { user_id } = req.params;
 
-	const { error } = appointmentValidationSchema.validate(req.body);
-	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+	//const { error } = appointmentValidationSchema.validate(req.body);
+	//if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 
 
 	const filter = { user_id: user_id.toLowerCase().trim() };

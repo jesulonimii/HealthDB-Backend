@@ -6,6 +6,9 @@ import { ErrorResponse, STATUS_CODE } from "#utils";
 const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
 export const GetUser = async (req, res) => {
+
+	console.log("get user", req.query);
+
 	const { id } = req.query;
 	if (!id) return res.status(BAD_REQUEST).send(ErrorResponse("User id is required"));
 
@@ -20,6 +23,8 @@ export const GetUser = async (req, res) => {
 
 export const EditUser = async (req, res) => {
 	const { id } = req.params;
+
+	console.log("edit user", req.body);
 
 	const { error } = editUserValidationSchema.validate(req.body);
 	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));

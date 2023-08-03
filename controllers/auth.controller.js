@@ -4,9 +4,12 @@ import { UserModel } from "#models";
 
 import { ErrorResponse, STATUS_CODE } from "#utils";
 
-const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
+const { BAD_REQUEST, CONFLICT, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
 export const Signup = async (req, res) => {
+
+	console.log("signup", req.body);
+
 	const { error } = signupValidationSchema.validate(req.body);
 	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 
@@ -14,7 +17,7 @@ export const Signup = async (req, res) => {
 	const matricExist = await UserModel.findOne({ user_id: req.body?.matric_number.toLowerCase() });
 	if (matricExist) {
 		return res
-			.status(INTERNAL_SERVER_ERROR)
+			.status(CONFLICT)
 			.send(ErrorResponse(`User SignUp Failed: Matric number already exists!`));
 	}
 
@@ -34,6 +37,12 @@ export const Signup = async (req, res) => {
 				date_of_birth: null,
 				gender: null,
 			},
+			student : {
+				department: null,
+				faculty: null,
+				level: null,
+				matric_number: req.body.matric_number.toLowerCase(),
+			},
 			contact_info: {
 				email: null,
 				address: null,
@@ -52,13 +61,13 @@ export const Signup = async (req, res) => {
 				message: "Please visit the health centre to complete your registration.",
 			},
 			pending_appointment: null,
-			completed_app_registration: true,
+			completed_app_registration: false,
 		});
 
 		user.save()
 			.then((result) => {
 				console.log("successful", result);
-				res.end(result);
+				res.status(OK).send(result);
 			})
 			.catch((err) => {
 				return new Error(err.message);
@@ -69,6 +78,9 @@ export const Signup = async (req, res) => {
 };
 
 export const Login = async (req, res) => {
+
+	console.log("trying login", req.body);
+
 	const { error } = loginValidationSchema.validate(req.body);
 	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 
