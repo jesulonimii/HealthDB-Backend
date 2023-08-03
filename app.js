@@ -1,15 +1,15 @@
 import express from "express";
 import serverless from "serverless-http";
 import mongoose from "mongoose";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
 //Import Routes
 import AuthRouter from "#routes/auth.route";
 import UserRouter from "#routes/user.route";
 import AppointmentRouter from "#routes/appointment.route";
+import ErrorRouter from "#routes/errors.route";
 
-
-dotenv.config()
+dotenv.config();
 
 
 const app = express();
@@ -27,11 +27,15 @@ app.use(express.json())
 app.use('/auth/', AuthRouter)
 app.use('/users/', UserRouter)
 app.use('/appointments/', AppointmentRouter)
+app.use('/*', ErrorRouter)
+
 
 
 app.get("/", (req, res) => {
     res.end("Welcome to HealthDB Api");
 })
+
+
 
 
 export default app;
