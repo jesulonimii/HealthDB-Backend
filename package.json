@@ -8,7 +8,7 @@
   "main": "server.js",
   "scripts": {
     "start with logs": "pm2 start server.js && pm2 logs",
-    "start": "pm2 start server.js",
+    "start": "node server.js",
     "kill server": "pm2 kill",
     "nodemon": "nodemon"
   },
