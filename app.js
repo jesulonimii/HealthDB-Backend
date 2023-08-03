@@ -31,9 +31,7 @@ app.use('/*', ErrorRouter)
 
 
 
-app.get("/", (req, res) => {
-    res.end("Welcome to HealthDB Api");
-})
+
 
 
 
