@@ -1,6 +1,7 @@
 import express from "express";
 import serverless from "serverless-http";
 import dotenv from "dotenv";
+import cors from "cors";
 
 //Import Routes
 import AuthRouter from "#routes/auth.route";
@@ -16,6 +17,9 @@ const app = express();
 
 //Middlewares
 app.use(express.json())
+app.use(cors({
+	origin: '*', //change to frontend url
+}))
 
 //Route Middlewares
 app.use('/auth/', AuthRouter)
