@@ -27,8 +27,16 @@ export const CreateAppointment = async (req, res) => {
 				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when updating User appointment data: ${err.message}`));
 			}
 
-			const appointment_filter = { appointment_id : req.body?.appointment_id.toLowerCase() };
-			const appointment_update = req.body;
+			const appointment_filter = { appointment_id : req.body?.appointment_id };
+			const appointment_update = {
+				...req.body,
+				student_info : {
+					first_name: data?.personal_info?.first_name,
+					last_name: data?.personal_info?.last_name,
+					matric_number: user_id.toUpperCase(),
+					profile_image: data?.personal_info?.profile_image
+				}
+			};
 			const appointment_options = { new: true, upsert: true };
 
 			AppointmentModel.findOneAndUpdate(appointment_filter, appointment_update, appointment_options).then((data, err) => {
@@ -44,6 +52,18 @@ export const CreateAppointment = async (req, res) => {
 		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Appointment Creation Failed: ${e.message}`));
 	}
 };
+
+export const GetAllAppointments = async (req, res) => {
+
+	try {
+		const appointments = await AppointmentModel.find();
+		if (!appointments) return res.status(BAD_REQUEST).send(ErrorResponse("No Appointments found"));
+
+		return res.status(OK).send(appointments);
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Appointments Retrieval Failed: ${e.message}`));
+	}
+}
 
 export const GetAppointment = async (req, res) => {
 	const { id } = req.query;
