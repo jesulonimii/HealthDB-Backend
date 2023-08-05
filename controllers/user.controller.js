@@ -42,7 +42,7 @@ export const EditUser = async (req, res) => {
 	try {
 		UserModel.findOneAndUpdate(filter, update, options).then((data, err) => {
 			if (err) {
-				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when updating User data: ${err.message}`));
+				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when updating user data: ${err.message}`));
 			}
 			return res.status(OK).send(data);
 		});

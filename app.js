@@ -7,6 +7,7 @@ import AuthRouter from "#routes/auth.route";
 import UserRouter from "#routes/user.route";
 import AppointmentRouter from "#routes/appointment.route";
 import ErrorRouter from "#routes/errors.route";
+import NewsRouter from "#routes/news.route";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json())
 app.use('/auth/', AuthRouter)
 app.use('/users/', UserRouter)
 app.use('/appointments/', AppointmentRouter)
+app.use('/news/', NewsRouter)
 app.use('/*', ErrorRouter)
 
 

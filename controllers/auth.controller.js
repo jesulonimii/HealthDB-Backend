@@ -57,7 +57,7 @@ export const Signup = async (req, res) => {
 			notifications: [],
 			appointments: [],
 			health_centre_registration: {
-				status: false,
+				status: "pending",
 				message: "Please visit the health centre to complete your registration.",
 			},
 			pending_appointment: null,
