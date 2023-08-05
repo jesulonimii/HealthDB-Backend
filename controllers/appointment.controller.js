@@ -3,7 +3,7 @@ import { AppointmentModel, UserModel } from "#models";
 
 import { ErrorResponse, STATUS_CODE } from "#utils";
 
-const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
+const { BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
 export const CreateAppointment = async (req, res) => {
 
@@ -18,6 +18,15 @@ export const CreateAppointment = async (req, res) => {
 		pending_appointment: req.body
 	};
 	const options = { new: true, upsert: true };
+
+
+	//check that user exists before creating appointment
+	const userExist = await UserModel.findOne(filter);
+	if (!userExist) {
+		return res
+			.status(NOT_FOUND)
+			.send(ErrorResponse(`Appointment Creation Failed: User specified for appointment creation does not exists!`));
+	}
 
 
 	try {
