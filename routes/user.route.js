@@ -6,6 +6,6 @@ import { EditUser, GetUser } from "#controllers/user.controller";
 const router = Router();
 
 router.get("/", GetUser);
-router.patch("/:id", EditUser);
+router.patch("/edit", EditUser);
 
 export default router;
