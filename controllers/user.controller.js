@@ -23,7 +23,7 @@ export const GetUser = async (req, res) => {
 
 export const EditUser = async (req, res) => {
 
-	const { id } = req.query;
+	const { user_id : id } = req.query;
 
 	console.log("edit user", req.body);
 

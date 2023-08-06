@@ -6,7 +6,7 @@ import { CreateAppointment, DeletePendingAppointment, GetAllAppointments } from 
 const router = Router();
 
 router.get("/", GetAllAppointments);
-router.post("/:user_id", CreateAppointment);
-router.delete("/:user_id", DeletePendingAppointment);
+router.post("/create", CreateAppointment);
+router.delete("/delete", DeletePendingAppointment);
 
 export default router;

@@ -7,7 +7,7 @@ const { BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, OK, INTERNAL_SERVER_ERROR } = STAT
 
 export const CreateAppointment = async (req, res) => {
 
-	const { user_id } = req.params;
+	const { user_id } = req.query;
 
 	const { error } = appointmentValidationSchema.validate(req.body);
 	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
@@ -89,7 +89,7 @@ export const GetAppointment = async (req, res) => {
 }
 
 export const DeletePendingAppointment = async (req, res) => {
-	const { user_id } = req.params;
+	const { user_id } = req.query;
 
 	//const { error } = appointmentValidationSchema.validate(req.body);
 	//if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
