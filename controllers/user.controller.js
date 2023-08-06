@@ -9,7 +9,7 @@ export const GetUser = async (req, res) => {
 
 	console.log("get user", req.query);
 
-	const { id } = req.query;
+	const id = req.query.id ?? req.query.user_id;
 	if (!id) return res.status(BAD_REQUEST).send(ErrorResponse("User id is required"));
 
 	try {
@@ -23,7 +23,7 @@ export const GetUser = async (req, res) => {
 
 export const EditUser = async (req, res) => {
 
-	const { user_id : id } = req.query;
+	const id = req.query.id ?? req.query.user_id;
 
 	console.log("edit user", req.body);
 
