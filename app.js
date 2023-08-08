@@ -5,6 +5,7 @@ import cors from "cors";
 
 //Import Routes
 import AuthRouter from "#routes/auth.route";
+import AdminRouter from "#routes/admin.route";
 import UserRouter from "#routes/user.route";
 import AppointmentRouter from "#routes/appointment.route";
 import ErrorRouter from "#routes/errors.route";
@@ -23,6 +24,7 @@ app.use(cors({
 
 //Route Middlewares
 app.use('/auth/', AuthRouter)
+app.use('/admin/', AdminRouter)
 app.use('/users/', UserRouter)
 app.use('/appointments/', AppointmentRouter)
 app.use('/news/', NewsRouter)

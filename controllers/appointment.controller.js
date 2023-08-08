@@ -39,12 +39,7 @@ export const CreateAppointment = async (req, res) => {
 			const appointment_filter = { appointment_id : req.body?.appointment_id };
 			const appointment_update = {
 				...req.body,
-				student_info : {
-					first_name: data?.personal_info?.first_name,
-					last_name: data?.personal_info?.last_name,
-					matric_number: user_id.toUpperCase(),
-					profile_image: data?.personal_info?.profile_image
-				}
+				student_info : data
 			};
 			const appointment_options = { new: true, upsert: true };
 
@@ -79,7 +74,7 @@ export const GetAppointment = async (req, res) => {
 	if (!id) return res.status(BAD_REQUEST).send(ErrorResponse("Appointment ID is required"));
 
 	try {
-		const appointment = await AppointmentModel.findOne({ appointment_id: id.toLowerCase().trim() });
+		const appointment = await AppointmentModel.findOne({ appointment_id: id.trim() });
 		if (!appointment) return res.status(BAD_REQUEST).send(ErrorResponse("Appointment not found"));
 
 		return res.status(OK).send(appointment);

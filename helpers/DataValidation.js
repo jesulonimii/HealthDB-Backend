@@ -31,4 +31,11 @@ export const appointmentValidationSchema = Joi.object({
 });
 
 
-export default {signupValidationSchema, loginValidationSchema, editUserValidationSchema, appointmentValidationSchema};
+export const adminLoginValidationSchema = Joi.object({
+	email: Joi.string().email().required(),
+	password: Joi.string().required(),
+});
+
+
+
+export default {signupValidationSchema, loginValidationSchema, editUserValidationSchema, appointmentValidationSchema, adminLoginValidationSchema};
