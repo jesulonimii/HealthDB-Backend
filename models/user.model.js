@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 	emergency_contacts: [{ type: Object }], // Array of strings for emergency contacts
 	medical_history: {
 		last_visit: { type: Date, default: null },
-		allergies: { type: String }, // Array of strings for allergies
+		allergies: { type: String }, // strings for allergies
 		additional_medical_info: { type: String, default: null }, // String
 		previous_medications: [{ type: Object, default: null }], // Array of objects for previous medications
 		doctors_notes: [{ type: Object, default: null }], // Array of  doctors notes

@@ -8,10 +8,11 @@ const { BAD_REQUEST, CONFLICT, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATU
 
 export const Signup = async (req, res) => {
 
-	console.log("signup", req.body);
+	console.log("signup started", req.body);
 
 	const { error } = signupValidationSchema.validate(req.body);
 	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
 
 	//check if matric number exists
 	const matricExist = await UserModel.findOne({ user_id: req.body?.matric_number.toLowerCase() });
@@ -51,7 +52,10 @@ export const Signup = async (req, res) => {
 			emergency_contacts: [],
 			medical_history: {
 				last_visit: null,
-				allergies: [],
+				allergies: null,
+				additional_medical_info: null,
+				previous_medications: [],
+				doctors_notes: [],
 				hospitalizations: [],
 			},
 			notifications: [],
