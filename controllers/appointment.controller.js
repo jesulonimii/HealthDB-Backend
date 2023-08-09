@@ -1,7 +1,11 @@
-import { appointmentValidationSchema } from "#helpers/DataValidation";
+import {
+	appointmentValidationSchema,
+	createPrescriptionValidationSchema,
+	medicalReportValidationSchema,
+} from "#helpers/DataValidation";
 import { AppointmentModel, UserModel } from "#models";
 
-import { ErrorResponse, STATUS_CODE } from "#utils";
+import { ErrorResponse, SOCKET_EVENT_KEYS, STATUS_CODE, SuccessResponse } from "#utils";
 
 const { BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
@@ -47,6 +51,9 @@ export const CreateAppointment = async (req, res) => {
 				if (err) {
 					return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when setting appointment data: ${err.message}`));
 				}
+				//send live alert to dashboard
+				const socket = req.app.get('socket')
+				socket.emit(SOCKET_EVENT_KEYS.appointments_update, data)
 				return res.status(OK).send(data);
 			});
 
@@ -112,8 +119,110 @@ export const DeletePendingAppointment = async (req, res) => {
 	}
 }
 
+export const CreateMedicalReport = async (req, res) => {
+
+	console.log("CreateMedicalReport", req.body);
+
+	const { user_id } = req.query;
+	if (!user_id) return  res.status(BAD_REQUEST).send(ErrorResponse("User ID is required"))
+
+	const { error } = medicalReportValidationSchema.validate(req.body);
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
+	//check if matric number exists
+	const userExist = await UserModel.findOne({ user_id: user_id.toLowerCase() });
+	if (!userExist) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Medical report creation for user failed: User does not exist!`));
+	}
+
+	const filter = { user_id: user_id.toLowerCase() };
+	const options = { new: true };
+
+	const update = {
+		medical_history: {
+			...userExist?.medical_history,
+			doctors_notes: [
+				...userExist?.medical_history?.doctors_notes,
+				req.body
+			]
+		}
+	};
+
+
+	try {
+		UserModel.findOneAndUpdate(filter, update, options).then((data, err) => {
+			if (err) {
+				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when creating medical report: ${err.message}`));
+			}
+			return res.status(OK).send(SuccessResponse("Medical report created successfully"));
+		});
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Medical report creation failed: ${e.message}`));
+	}
+
+
+
+
+}
+
+export const CreatePrescription = async (req, res) => {
+
+
+	const { user_id } = req.query;
+	if (!user_id) return  res.status(BAD_REQUEST).send(ErrorResponse("User ID is required"))
+
+	const { error } = createPrescriptionValidationSchema.validate(req.body);
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
+	//check if user exists
+	const userExist = await UserModel.findOne({ user_id: user_id.toLowerCase() });
+	if (!userExist) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Prescription creation failed: User does not exist!`));
+	}
+
+
+
+	const filter = { user_id: user_id.toLowerCase() };
+	const options = { new: true };
+
+	const update = {
+		medical_history: {
+			...userExist?.medical_history,
+			previous_medications: [
+				...userExist?.medical_history?.previous_medications,
+				req.body
+			]
+		}
+	};
+
+
+	try {
+		UserModel.findOneAndUpdate(filter, update, options).then((data, err) => {
+			if (err) {
+				return res
+					.status(INTERNAL_SERVER_ERROR)
+					.send(ErrorResponse(`Something wrong when creating prescription: ${err.message}`));
+			}
+
+			//send live alert to dashboard
+			const socket = req.app.get('socket')
+			socket.emit(SOCKET_EVENT_KEYS.prescription_update, req.body)
+
+
+			return res.status(OK).send(SuccessResponse("Prescription created successfully"));
+		});
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Prescription creation failed: ${e.message}`));
+	}
+
+
+
+}
+
+
 export default {
 	CreateAppointment,
 	DeletePendingAppointment,
-	GetAppointment
+	GetAppointment,
+	CreateMedicalReport
 };

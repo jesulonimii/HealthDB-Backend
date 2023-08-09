@@ -36,6 +36,19 @@ export const adminLoginValidationSchema = Joi.object({
 	password: Joi.string().required(),
 });
 
+export const medicalReportValidationSchema = Joi.object({
+	report: Joi.string().required(),
+	date: Joi.date().required(),
+	doctor: Joi.string().required(),
+	appointment_id: Joi.string().required()
+})
+
+export const createPrescriptionValidationSchema = Joi.object({
+	name: Joi.string().required(),
+	details: Joi.string().required(),
+	date: Joi.date().required()
+});
+
 
 
 export default {signupValidationSchema, loginValidationSchema, editUserValidationSchema, appointmentValidationSchema, adminLoginValidationSchema};

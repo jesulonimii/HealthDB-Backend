@@ -32,10 +32,5 @@ app.use('/*', ErrorRouter)
 
 
 
-
-
-
-
-
 export default app;
 export const handler = serverless(app);

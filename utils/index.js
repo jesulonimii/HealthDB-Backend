@@ -1,3 +1,4 @@
+export { SOCKET_EVENT_KEYS } from './socket-event-keys.js'
 export const STATUS_CODE = {
     OK: 200,
     CREATED: 201,
@@ -19,4 +20,8 @@ export const STATUS_CODE = {
 
 export const ErrorResponse = ( message) => {
     return { error: message }
+}
+
+export const SuccessResponse = ( message) => {
+    return { success: message }
 }
