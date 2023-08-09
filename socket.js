@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000", "https://healthdb-admin.vercel.app"];
 
 export const attachSocket = (server, app) => {
 
