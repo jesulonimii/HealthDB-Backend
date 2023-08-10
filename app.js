@@ -30,6 +30,10 @@ app.use('/appointments/', AppointmentRouter)
 app.use('/news/', NewsRouter)
 app.use('/*', ErrorRouter)
 
+app.get("/", (req, res) => {
+	res.end("Welcome to HealthDB Api");
+});
+
 
 
 export default app;

@@ -52,7 +52,23 @@ export const EditUser = async (req, res) => {
 	}
 };
 
+export const GetUserNotifications = async (req, res) => {
+
+	const id = req.query.id ?? req.query.user_id;
+
+	if (!id) return res.status(BAD_REQUEST).send(ErrorResponse("User id is required"));
+
+	try {
+		const user = await UserModel.findOne({ user_id: id.toLowerCase() })
+		if (!user) return res.status(BAD_REQUEST).send(ErrorResponse(`User with id ${id} not found`));
+		return res.status(OK).send(user?.notifications);
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(e.message));
+	}
+}
+
 export default {
 	EditUser,
 	GetUser,
+	GetUserNotifications
 };
