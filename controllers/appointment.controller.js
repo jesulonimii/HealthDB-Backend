@@ -94,8 +94,6 @@ export const DeletePendingAppointment = async (req, res) => {
 	const { user_id } = req.query;
 
 
-	console.log("delete called", user_id);
-
 	//const { error } = appointmentValidationSchema.validate(req.body);
 	//if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 

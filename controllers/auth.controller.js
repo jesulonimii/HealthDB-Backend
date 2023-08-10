@@ -70,7 +70,6 @@ export const Signup = async (req, res) => {
 
 		user.save()
 			.then((result) => {
-				console.log("successful", result);
 				res.status(OK).send(result);
 			})
 			.catch((err) => {
@@ -98,7 +97,7 @@ export const Login = async (req, res) => {
 	if (!validPassword) return res.status(UNAUTHORIZED).send(ErrorResponse(`Login Failed: We couldn't find any account matching the details provided.`));
 
 
-	console.log("logged in", user);
+	console.log("logged in", user?.user_id);
 	res.status(OK).send(user);
 
 };
