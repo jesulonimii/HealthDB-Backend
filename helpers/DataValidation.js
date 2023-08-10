@@ -46,7 +46,8 @@ export const medicalReportValidationSchema = Joi.object({
 export const createPrescriptionValidationSchema = Joi.object({
 	name: Joi.string().required(),
 	details: Joi.string().required(),
-	date: Joi.date().required()
+	date: Joi.date().required(),
+	appointment_id: Joi.string(),
 });
 
 

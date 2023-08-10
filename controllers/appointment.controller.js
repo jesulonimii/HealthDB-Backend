@@ -192,13 +192,19 @@ export const CreatePrescription = async (req, res) => {
 	const filter = { user_id: user_id.toLowerCase() };
 	const options = { new: true };
 
+	const notification_message = ```
+	 "You have a new prescription to be picked up for your latest appointment at the health center:\n
+	 Appointment ID: ${req.body?.appointment_id}	 
+	 \n\nShow this notification to the attendant at the pharmacy to pick up your prescription."
+	```
+
 	const update = {
 		notifications: [
 			...userExist?.notifications,
 			{
-				title: "You have a new Prescription! 🎉",
-				message : "You have a new prescription to be picked up.\n Show this notification to the attendant at the pharmacy to pick up your prescription.",
+				title: "You have a new prescription! 💊",
 				date: new Date(),
+				message : notification_message,
 			}
 		],
 		medical_history: {
