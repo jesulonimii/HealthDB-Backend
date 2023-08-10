@@ -93,6 +93,9 @@ export const GetAppointment = async (req, res) => {
 export const DeletePendingAppointment = async (req, res) => {
 	const { user_id } = req.query;
 
+
+	console.log("delete called", user_id);
+
 	//const { error } = appointmentValidationSchema.validate(req.body);
 	//if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
 
@@ -110,8 +113,11 @@ export const DeletePendingAppointment = async (req, res) => {
 				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when updating User appointment data: ${err.message}`));
 			}
 
-			AppointmentModel.deleteOne({ appointment_id : req.body?.appointment_id }).then((data, err) => {
-				//deleted
+			AppointmentModel.deleteOne({ appointment_id : req.body.appointment_id }).then((data, err) => {
+				//send update alert to dashboard
+				const socket = req.app.get('socket')
+				socket.emit(SOCKET_EVENT_KEYS.appointments_update, data)
+
 			})
 
 			return res.status(OK).send(data);
