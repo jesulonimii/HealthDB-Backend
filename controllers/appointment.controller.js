@@ -110,8 +110,11 @@ export const DeletePendingAppointment = async (req, res) => {
 				return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when updating User appointment data: ${err.message}`));
 			}
 
-			return res.status(OK).send(data);
+			AppointmentModel.deleteOne({ appointment_id : req.body?.appointment_id }).then((data, err) => {
+				//deleted
+			})
 
+			return res.status(OK).send(data);
 		});
 
 	} catch (e) {
@@ -186,6 +189,14 @@ export const CreatePrescription = async (req, res) => {
 	const options = { new: true };
 
 	const update = {
+		notifications: [
+			...userExist?.notifications,
+			{
+				title: "You have a new Prescription! 🎉",
+				message : "You have a new prescription to be picked up.\n Show this notification to the attendant at the pharmacy to pick up your prescription.",
+				date: new Date(),
+			}
+		],
 		medical_history: {
 			...userExist?.medical_history,
 			previous_medications: [
@@ -207,6 +218,8 @@ export const CreatePrescription = async (req, res) => {
 			//send live alert to dashboard
 			const socket = req.app.get('socket')
 			socket.emit(SOCKET_EVENT_KEYS.prescription_update, req.body)
+
+
 
 
 			return res.status(OK).send(SuccessResponse("Prescription created successfully"));
