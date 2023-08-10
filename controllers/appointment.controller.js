@@ -201,7 +201,7 @@ export const CreatePrescription = async (req, res) => {
 		notifications: [
 			...userExist?.notifications,
 			{
-				title: "You have a new prescription! 💊",
+				title: "You have a new prescription! ⚕️💊",
 				date: new Date(),
 				message : notification_message,
 			}
