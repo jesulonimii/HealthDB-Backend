@@ -227,8 +227,13 @@ export const CreatePrescription = async (req, res) => {
 			}
 
 			//send live alert to dashboard
-			const socket = req.app.get('socket')
-			socket.emit(SOCKET_EVENT_KEYS.prescription_update, req.body)
+			try {
+				const socket = req.app.get('socket')
+				socket.emit(SOCKET_EVENT_KEYS.prescription_update, req.body)
+			}
+			catch (e) {
+				console.log("Socket Error", e)
+			}
 
 
 			//send push notification
