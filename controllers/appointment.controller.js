@@ -6,6 +6,7 @@ import {
 import { AppointmentModel, UserModel } from "#models";
 
 import { ErrorResponse, SOCKET_EVENT_KEYS, STATUS_CODE, SuccessResponse } from "#utils";
+import { createNotificationMessage, sendExpoPushNotification } from "#helpers/ExpoPushNotificationTool";
 
 const { BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
@@ -192,6 +193,7 @@ export const CreatePrescription = async (req, res) => {
 	const filter = { user_id: user_id.toLowerCase() };
 	const options = { new: true };
 
+	const notification_title = "You have a new prescription! ⚕️💊"
 	const notification_message = `You have a new prescription to be picked up for your latest appointment at the health center:
 	\nAppointment ID: ${req.body?.appointment_id}	 
 	\n\nShow this notification to the attendant at the pharmacy to pick up your prescription.
@@ -201,7 +203,7 @@ export const CreatePrescription = async (req, res) => {
 		notifications: [
 			...userExist?.notifications,
 			{
-				title: "You have a new prescription! ⚕️💊",
+				title: notification_title,
 				date: new Date(),
 				message : notification_message,
 			}
@@ -227,6 +229,32 @@ export const CreatePrescription = async (req, res) => {
 			//send live alert to dashboard
 			const socket = req.app.get('socket')
 			socket.emit(SOCKET_EVENT_KEYS.prescription_update, req.body)
+
+
+			//send push notification
+
+			const pushNotificationToken = userExist?.push_notifications_token
+			if (pushNotificationToken){
+				sendExpoPushNotification(pushNotificationToken, createNotificationMessage(
+					pushNotificationToken,
+					notification_title,
+					notification_message
+				)).then((res) => {
+					if (res === "DeviceNotRegistered"){
+						UserModel.findOneAndUpdate(filter, { push_notifications_token: null }, options).then((data, err) => {
+							if (err) {
+								return res
+									.status(INTERNAL_SERVER_ERROR)
+									.send(ErrorResponse(`Something wrong when updating push notification token for unregistered-device: ${err.message}`));
+							}
+
+						})
+					}
+					else {
+						console.log("Notification sent successfully", res)
+					}
+				})
+			}
 
 
 
