@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema({
 	},
 	pending_appointment: { type: Object, default: null },
 	completed_app_registration: { type: Boolean, default: false },
+	push_notifications_token: { type: String, default: null },
 });
 
 

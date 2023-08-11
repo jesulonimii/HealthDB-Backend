@@ -23,6 +23,7 @@ export const editUserValidationSchema = Joi.object({
 	health_centre_registration: Joi.object(),
 	pending_appointment: Joi.object(),
 	completed_app_registration: Joi.bool(),
+	push_notifications_token: Joi.string(),
 });
 
 export const appointmentValidationSchema = Joi.object({
