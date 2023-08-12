@@ -53,8 +53,14 @@ export const CreateAppointment = async (req, res) => {
 					return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Something wrong when setting appointment data: ${err.message}`));
 				}
 				//send live alert to dashboard
-				const socket = req.app.get('socket')
-				socket.emit(SOCKET_EVENT_KEYS.appointments_update, data)
+				try {
+					const socket = req.app.get('socket')
+					socket.emit(SOCKET_EVENT_KEYS.appointments_update, data)
+				}
+				catch (e) {
+					console.log("Socket Error", e)
+				}
+
 				return res.status(OK).send(data);
 			});
 
@@ -114,8 +120,14 @@ export const DeletePendingAppointment = async (req, res) => {
 
 			AppointmentModel.deleteOne({ appointment_id : req.body.appointment_id }).then((data, err) => {
 				//send update alert to dashboard
-				const socket = req.app.get('socket')
-				socket.emit(SOCKET_EVENT_KEYS.appointments_update, data)
+				try {
+					const socket = req.app.get('socket')
+					socket.emit(SOCKET_EVENT_KEYS.appointments_update, data)
+				}
+				catch (e) {
+					console.log("Socket Error", e)
+				}
+
 
 			})
 
