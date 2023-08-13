@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGODB_CONNECT, () => {
 
     server.listen(port, () => {
         console.log(`HealthDB API is live on port:${port}`)
-        console.log(`Waiting on ${host}`)
+        console.log(`Waiting on ${host}\n\n`)
     });
 })
 

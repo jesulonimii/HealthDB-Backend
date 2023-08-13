@@ -6,7 +6,7 @@ import {
 import { AppointmentModel, UserModel } from "#models";
 
 import { ErrorResponse, SOCKET_EVENT_KEYS, STATUS_CODE, SuccessResponse } from "#utils";
-import { createNotificationMessage, sendExpoPushNotification } from "#helpers/ExpoPushNotificationTool";
+import { createFCMNotificationMessage, sendFCMPushNotification } from "#helpers/FCMPushNotificationTool";
 
 const { BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
@@ -254,7 +254,7 @@ export const CreatePrescription = async (req, res) => {
 				socket.emit(SOCKET_EVENT_KEYS.prescription_update, alertInfo)
 			}
 			catch (e) {
-				console.log("Socket Error", e)
+				//console.log("Socket Error", e)
 			}
 
 
@@ -262,7 +262,7 @@ export const CreatePrescription = async (req, res) => {
 
 			const pushNotificationToken = userExist?.push_notifications_token
 			if (pushNotificationToken){
-				sendExpoPushNotification(pushNotificationToken, createNotificationMessage(
+				sendFCMPushNotification(pushNotificationToken, createFCMNotificationMessage(
 					pushNotificationToken,
 					notification_title,
 					notification_message

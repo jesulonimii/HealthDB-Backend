@@ -21,6 +21,7 @@
     "expo-server-sdk": "^3.7.0",
     "express": "^4.17.1",
     "express-unless": "^2.1.1",
+    "firebase-admin": "^11.10.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^6.5.2",
