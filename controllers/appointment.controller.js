@@ -205,10 +205,14 @@ export const CreatePrescription = async (req, res) => {
 	const filter = { user_id: user_id.toLowerCase() };
 	const options = { new: true };
 
-	const notification_title = "You have a new prescription! ⚕️💊"
+	const notification_title = "You have a new prescription! 💊"
 	const notification_message = `You have a new prescription to be picked up for your latest appointment at the health center:
 	\nAppointment ID: ${req.body?.appointment_id}	 
 	\n\nShow this notification to the attendant at the pharmacy to pick up your prescription.
+	\nYou are to receive: ${req.body?.name}
+	\nDetails: ${req.body?.details}
+	\nAny other additional information would be given to you by the attendant at the pharmacy.
+	\n\nThank you for using visiting, Wishing you speeding recovery! 🤗
 	`
 
 	const update = {
@@ -240,8 +244,14 @@ export const CreatePrescription = async (req, res) => {
 
 			//send live alert to dashboard
 			try {
+
+				const alertInfo = {
+					...req.body,
+					student_info : data
+				}
+
 				const socket = req.app.get('socket')
-				socket.emit(SOCKET_EVENT_KEYS.prescription_update, req.body)
+				socket.emit(SOCKET_EVENT_KEYS.prescription_update, alertInfo)
 			}
 			catch (e) {
 				console.log("Socket Error", e)
