@@ -1,4 +1,4 @@
-import { ErrorResponse, STATUS_CODE } from "#utils";
+import { ErrorResponse, STATUS_CODE, SuccessResponse } from "#utils";
 import { newsValidationSchema } from "#helpers/DataValidation";
 import { NewsModel } from "#models";
 
@@ -99,7 +99,7 @@ export const PublishNews = async (req, res) => {
 
 export const PushNews = async (req, res) => {
 
-	const set = req.body?.news
+	const set = req.body
 
 	if (!set) return res.status(BAD_REQUEST).send(ErrorResponse("Can't push empty array of news"));
 
@@ -120,6 +120,8 @@ export const PushNews = async (req, res) => {
 			});
 
 	})
+
+	res.status(OK).send(SuccessResponse("News array pushed successfully"));
 
 }
 
