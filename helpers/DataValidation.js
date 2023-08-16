@@ -51,6 +51,18 @@ export const createPrescriptionValidationSchema = Joi.object({
 	appointment_id: Joi.string(),
 });
 
+export const notifyStudentValidationSchema = Joi.object({
+	title: Joi.string().required(),
+	message: Joi.string().required(),
+});
+
+export const newsValidationSchema = Joi.object({
+	title: Joi.string().required(),
+	content: Joi.string().required(),
+	image: Joi.string(),
+	category: Joi.string(),
+})
+
 
 
 export default {signupValidationSchema, loginValidationSchema, editUserValidationSchema, appointmentValidationSchema, adminLoginValidationSchema};

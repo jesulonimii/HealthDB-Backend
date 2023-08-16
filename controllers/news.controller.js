@@ -1,9 +1,11 @@
-import { STATUS_CODE } from "#utils";
+import { ErrorResponse, STATUS_CODE } from "#utils";
+import { newsValidationSchema } from "#helpers/DataValidation";
+import { NewsModel } from "#models";
 
-const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
+const { BAD_REQUEST, UNAUTHORIZED, CONFLICT, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
 export const GetAllNews = async (req, res) => {
-	res.status(OK).send([
+/*	res.status(OK).send([
 		{
 			title: "OAU Health Center Announces State-of-the-Art Facilities Upgrade",
 			date: "2023-08-04",
@@ -52,8 +54,74 @@ export const GetAllNews = async (req, res) => {
 			content:
 				"The OAU Health Center's First Aid Team emerged victorious in a regional first aid competition. Competing against other universities, the team showcased their skills in emergency response and medical care. Their success reflects the dedication and training provided by the OAU Health Center in ensuring the safety and well-being of the university community.",
 		},
-	]);
+	]);*/
+
+	try {
+		const articles = await NewsModel.find();
+		if (!articles) return res.status(BAD_REQUEST).send(ErrorResponse("No news article found"));
+
+		return res.status(OK).send(articles);
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`News articles Retrieval Failed: ${e.message}`));
+	}
 };
+
+export const PublishNews = async (req, res) => {
+
+	const { error } = newsValidationSchema.validate(req.body);
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
+
+	console.log(req.body);
+
+	const article = new NewsModel({
+		...req.body,
+		date: new Date(),
+	})
+
+	try {
+		article.save()
+			.then((result) => {
+				res.status(OK).send(result);
+				//return res.status(OK).send(SuccessResponse("News published successfully"));
+			})
+			.catch((err) => {
+				return new Error(err.message);
+			});
+	}
+	catch (error) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(error.message));
+	}
+
+
+
+}
+
+export const PushNews = async (req, res) => {
+
+	const set = req.body?.news
+
+	if (!set) return res.status(BAD_REQUEST).send(ErrorResponse("Can't push empty array of news"));
+
+	set.forEach((article) => {
+
+		const newArticle = new NewsModel({
+			...article,
+			date: new Date(),
+		})
+
+		newArticle.save()
+			.then((result) => {
+				//res.status(OK).send(result);
+				//return res.status(OK).send(SuccessResponse("News published successfully"));
+			})
+			.catch((err) => {
+				return new Error(err.message);
+			});
+
+	})
+
+}
 
 export default {
 	GetAllNews,

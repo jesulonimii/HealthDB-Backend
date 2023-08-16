@@ -1,7 +1,8 @@
-import { editUserValidationSchema } from "#helpers/DataValidation";
+import { editUserValidationSchema, notifyStudentValidationSchema } from "#helpers/DataValidation";
 import { UserModel } from "#models";
 
-import { ErrorResponse, STATUS_CODE } from "#utils";
+import { ErrorResponse, STATUS_CODE, SuccessResponse } from "#utils";
+import { createFCMNotificationMessage, sendFCMPushNotification } from "#helpers/FCMPushNotificationTool";
 
 const { BAD_REQUEST, UNAUTHORIZED, OK, INTERNAL_SERVER_ERROR } = STATUS_CODE;
 
@@ -66,6 +67,87 @@ export const GetUserNotifications = async (req, res) => {
 		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(e.message));
 	}
 }
+
+export const NotifyUser = async (req, res) => {
+
+
+	const { user_id } = req.query;
+	if (!user_id) return  res.status(BAD_REQUEST).send(ErrorResponse("User ID is required"))
+
+	const { error } = notifyStudentValidationSchema.validate(req.body);
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
+	//check if user exists
+	const userExist = await UserModel.findOne({ user_id: user_id.toLowerCase() });
+	if (!userExist) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Prescription creation failed: User does not exist!`));
+	}
+
+
+
+	const filter = { user_id: user_id.toLowerCase() };
+	const options = { new: true };
+
+	const notification_title = req.body.title
+	const notification_message = req.body?.message
+
+	const update = {
+		notifications: [
+			...userExist?.notifications,
+			{
+				title: notification_title,
+				date: new Date(),
+				message : notification_message,
+			}
+		]
+	};
+
+
+	try {
+		UserModel.findOneAndUpdate(filter, update, options).then((data, err) => {
+			if (err) {
+				return res
+					.status(INTERNAL_SERVER_ERROR)
+					.send(ErrorResponse(`Something wrong when creating prescription: ${err.message}`));
+			}
+
+			//send push notification
+			const pushNotificationToken = userExist?.push_notifications_token
+			if (pushNotificationToken){
+				sendFCMPushNotification(pushNotificationToken, createFCMNotificationMessage(
+					pushNotificationToken,
+					notification_title,
+					notification_message
+				)).then((res) => {
+					if (res === "DeviceNotRegistered"){
+						UserModel.findOneAndUpdate(filter, { push_notifications_token: null }, options).then((data, err) => {
+							if (err) {
+								return res
+									.status(INTERNAL_SERVER_ERROR)
+									.send(ErrorResponse(`Something wrong when updating push notification token for unregistered-device: ${err.message}`));
+							}
+
+						})
+					}
+					else {
+						console.log("Notification sent successfully", res)
+					}
+				})
+			}
+
+
+
+
+			return res.status(OK).send(SuccessResponse("Student notified successfully"));
+		});
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Student notification failed: ${e.message}`));
+	}
+
+
+
+}
+
 
 export default {
 	EditUser,
