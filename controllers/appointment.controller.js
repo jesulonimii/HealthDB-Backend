@@ -212,7 +212,8 @@ export const CreatePrescription = async (req, res) => {
 	\nYou are to receive: ${req.body?.name}
 	\nDetails: ${req.body?.details}
 	\nAny other additional information would be given to you by the attendant at the pharmacy.
-	\n\nThank you for using visiting, Wishing you speeding recovery! 🤗
+	\n\nPlease not that this prescription is only valid for 5 days from the date of issue.
+	\nThank you for visiting, Wishing you speeding recovery! 🤗
 	`
 
 	const update = {
@@ -296,10 +297,116 @@ export const CreatePrescription = async (req, res) => {
 
 }
 
+export const FinishAppointment = async (req, res) => {
+
+	console.log("FinishAppointment", req.body);
+
+	const { user_id } = req.query;
+	if (!user_id) return  res.status(BAD_REQUEST).send(ErrorResponse("User ID is required"))
+
+	const { error } = appointmentValidationSchema.validate(req.body);
+	if (error) return res.status(BAD_REQUEST).send(ErrorResponse(error.message));
+
+
+	//check if matric number exists
+	const userExist = await UserModel.findOne({ user_id: user_id.toLowerCase() });
+	if (!userExist) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Appointment finish failed: User does not exist!`));
+	}
+
+
+
+
+	const filter = { user_id: user_id.toLowerCase() };
+	const options = { new: true };
+
+	const update = {
+		pending_appointment: null,
+		appointments: [
+			...userExist?.appointments,
+			req.body,
+		],
+};
+
+	//send push notification
+	const notification_title = "Your appointment was successfully completed! 🎉"
+	const notification_message = `Your appointment at the health center with id
+	\nAppointment ID: ${req.body?.appointment_id}	 
+	\nwas successfully completed. Thank you for visiting! 🤗
+	`
+
+
+	try {
+		UserModel.findOneAndUpdate(filter, update, options).then((data, err) => {
+			if (err) {
+				return res
+					.status(INTERNAL_SERVER_ERROR)
+					.send(ErrorResponse(`Something wrong when ending Appointment: ${err.message}`));
+			}
+
+			console.log("reachysss");
+
+
+			AppointmentModel.deleteOne({ appointment_id : req.body.appointment_id }).then((data, err) => {
+
+				if (err) {
+					return res
+						.status(INTERNAL_SERVER_ERROR)
+						.send(ErrorResponse(`Something wrong when deleting Appointment: ${err.message}`));
+				}
+
+				//send live alert to dashboard
+				try {
+
+					const socket = req.app.get('socket')
+					socket.emit(SOCKET_EVENT_KEYS.appointments_update, {})
+				}
+				catch (e) {
+					//console.log("Socket Error", e)
+				}
+
+			})
+			console.log("reachysbbbb");
+
+
+			const pushNotificationToken = userExist?.push_notifications_token
+			if (pushNotificationToken){
+				sendFCMPushNotification(pushNotificationToken, createFCMNotificationMessage(
+					pushNotificationToken,
+					notification_title,
+					notification_message
+				)).then((res) => {
+					if (res === "DeviceNotRegistered"){
+						UserModel.findOneAndUpdate(filter, { push_notifications_token: null }, options).then((data, err) => {
+							if (err) {
+								return res
+									.status(INTERNAL_SERVER_ERROR)
+									.send(ErrorResponse(`Something wrong when updating push notification token for unregistered-device: ${err.message}`));
+							}
+
+						})
+					}
+					else {
+						console.log("Notification status:", res)
+					}
+				})
+			}
+
+
+			return res.status(OK).send(SuccessResponse("Appointment ended successfully"));
+		});
+	} catch (e) {
+		return res.status(INTERNAL_SERVER_ERROR).send(ErrorResponse(`Appointment end failed: ${e.message}`));
+	}
+
+}
+
 
 export default {
 	CreateAppointment,
 	DeletePendingAppointment,
 	GetAppointment,
-	CreateMedicalReport
+	CreateMedicalReport,
+	CreatePrescription,
+	FinishAppointment,
 };
